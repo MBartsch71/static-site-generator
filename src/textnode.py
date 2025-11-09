@@ -3,11 +3,11 @@ from enum import Enum
 
 class TextType(Enum):
     TEXT = "text"
-    BOLD = "**bold**"
+    BOLD = "bold"
     ITALIC = "italic"
     CODE = "code"
     LINK = "link"
-    IMAGE = "image url"
+    IMAGE = "image"
 
 class TextNode():
     
