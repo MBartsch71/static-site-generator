@@ -8,7 +8,7 @@ import sys
 
 def clean_public_dir():
     """Remove all files and subdirectories in the public directory."""
-    public_dir = os.path.join(os.path.dirname(__file__), '../public')
+    public_dir = os.path.join(os.path.dirname(__file__), '../docs')
     if os.path.exists(public_dir):
         # Remove the entire directory and its contents
         shutil.rmtree(public_dir)
