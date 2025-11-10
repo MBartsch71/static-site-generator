@@ -112,9 +112,7 @@ def extract_title(markdown):
 
 def copy_static_to_public():
     static_dir = os.path.join(os.path.dirname(__file__), '../static')
-    print(f"Static Dir: {static_dir}")
     public_dir = os.path.join(os.path.dirname(__file__), '../docs')
-    print(f"Public Dir: {public_dir}")
 
     if not os.path.exists(public_dir):
         os.makedirs(public_dir)
