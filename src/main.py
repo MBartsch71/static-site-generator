@@ -55,6 +55,7 @@ def generate_pages_recursive(content_dir, template_path, public_dir, base_path="
 def main():
     # Get base path from command line argument, default to '/'
     base_path = sys.argv[1] if len(sys.argv) > 1 else "/"
+    print(f"Using base path: {base_path}")
     # Ensure base_path starts and ends with /
     if not base_path.startswith("/"):
         base_path = "/" + base_path
@@ -88,8 +89,8 @@ def generate_page(from_path, template_path, dest_path, base_path="/"):
     full_html = template.replace("{{ Content }}", html_node )
     full_html = full_html.replace("{{ Title }}", title)
     # Optional base path replacement for templates that include {{ Base }}
-    full_html = full_html.replace("href=/\"", "href=\"base_path")
-    full_html = full_html.replace("src=/\"", "src=\"base_path")
+    full_html = full_html.replace('href="/', f'href="{base_path}')
+    full_html = full_html.replace('src="/', f'src="{base_path}')
 
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
