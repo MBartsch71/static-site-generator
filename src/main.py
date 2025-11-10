@@ -3,6 +3,7 @@ from htmlnode import HTMLNode
 from markdown_blocks import markdown_to_blocks, block_to_block_type, markdown_to_html_node, BlockType
 import os
 import shutil
+import sys
 
 
 def clean_public_dir():
@@ -14,7 +15,7 @@ def clean_public_dir():
     # Recreate empty public directory
     os.makedirs(public_dir)
 
-def generate_pages_recursive(content_dir, template_path, public_dir):
+def generate_pages_recursive(content_dir, template_path, public_dir, base_path="/"):
     """
     Recursively generate HTML pages from markdown files in content directory.
     
@@ -48,22 +49,29 @@ def generate_pages_recursive(content_dir, template_path, public_dir):
                 
                 dest_path = os.path.join(public_dir, rel_path, dest_file)
                 
-                # Generate the page
-                generate_page(from_path=from_path, template_path=template_path, dest_path=dest_path)
+                # Generate the page, passing base_path through
+                generate_page(from_path=from_path, template_path=template_path, dest_path=dest_path, base_path=base_path)
 
 def main():
-    Text = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
+    # Get base path from command line argument, default to '/'
+    base_path = sys.argv[1] if len(sys.argv) > 1 else "/"
+    # Ensure base_path starts and ends with /
+    if not base_path.startswith("/"):
+        base_path = "/" + base_path
+    if not base_path.endswith("/"):
+        base_path = base_path + "/"
+
     clean_public_dir()
     copy_static_to_public()
     
     # Generate all pages recursively
     content_dir = os.path.join(os.path.dirname(__file__), '../content')
     template_path = os.path.join(os.path.dirname(__file__), '../template.html')
-    public_dir = os.path.join(os.path.dirname(__file__), '../public')
+    public_dir = os.path.join(os.path.dirname(__file__), '../docs')
     
-    generate_pages_recursive(content_dir, template_path, public_dir)
+    generate_pages_recursive(content_dir, template_path, public_dir, base_path)
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, base_path="/"):
     print(f"Generating page from {from_path} to {dest_path} using template {template_path}")
     with open(from_path, 'r') as f:
         markdown = f.read()
@@ -79,6 +87,9 @@ def generate_page(from_path, template_path, dest_path):
 
     full_html = template.replace("{{ Content }}", html_node )
     full_html = full_html.replace("{{ Title }}", title)
+    # Optional base path replacement for templates that include {{ Base }}
+    full_html = full_html.replace("href=/\"", "href=\"base_path")
+    full_html = full_html.replace("src=/\"", "src=\"base_path")
 
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
